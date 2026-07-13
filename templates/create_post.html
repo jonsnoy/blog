@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2>{% if edit_mode %}Редактировать пост{% else %}Новый пост{% endif %}</h2>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="title" class="form-label">Заголовок</label>
+                <input type="text" class="form-control" id="title" name="title" 
+                       value="{{ post.title if post else '' }}" required maxlength="100">
+            </div>
+            <div class="mb-3">
+                <label for="body" class="form-label">Содержание</label>
+                <textarea class="form-control" id="body" name="body" rows="10" required>{{ post.body if post else '' }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="tags" class="form-label">Теги (через запятую)</label>
+                <input type="text" class="form-control" id="tags" name="tags" 
+                       value="{{ post.tags | map(attribute='name') | join(', ') if post else '' }}" 
+                       placeholder="python, flask, web">
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="is_private" name="is_private" 
+                       {% if post and post.is_private %}checked{% endif %}>
+                <label class="form-check-label" for="is_private">Скрытый пост (только по запросу)</label>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                {% if edit_mode %}Сохранить изменения{% else %}Опубликовать{% endif %}
+            </button>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Отмена</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

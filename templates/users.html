@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Пользователи</h2>
+<div class="row">
+    {% for user in users %}
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ user.username }}</h5>
+                    <p class="card-text">
+                        <small>Постов: {{ user.posts.count() }}</small><br>
+                        <small>Подписчиков: {{ user.followers.count() }}</small>
+                    </p>
+                    
+                    {% if current_user.is_authenticated and current_user != user %}
+                        {% if current_user.is_following(user) %}
+                            <a href="{{ url_for('unfollow', user_id=user.id) }}" class="btn btn-sm btn-outline-danger">Отписаться</a>
+                        {% else %}
+                            <a href="{{ url_for('follow', user_id=user.id) }}" class="btn btn-sm btn-outline-primary">Подписаться</a>
+                        {% endif %}
+                    {% endif %}
+                    
+                    <a href="{{ url_for('view_profile', user_id=user.id) }}" class="btn btn-sm btn-outline-secondary">Профиль</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

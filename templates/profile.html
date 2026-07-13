@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h3>{{ profile_user.username }}</h3>
+                <p>
+                    <span class="badge bg-primary">{{ profile_user.followers.count() }} подписчиков</span>
+                    <span class="badge bg-secondary">{{ profile_user.followed.count() }} подписок</span>
+                </p>
+                
+                {% if current_user.is_authenticated and current_user != profile_user %}
+                    {% if current_user.is_following(profile_user) %}
+                        <a href="{{ url_for('unfollow', user_id=profile_user.id) }}" class="btn btn-danger">Отписаться</a>
+                    {% else %}
+                        <a href="{{ url_for('follow', user_id=profile_user.id) }}" class="btn btn-primary">Подписаться</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <h4>Посты пользователя</h4>
+        {% for post in posts %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5>
+                        <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
+                        {% if post.is_private %}<span class="badge bg-warning">Скрытый</span>{% endif %}
+                    </h5>
+                    <p>{{ post.body[:200] }}{% if post.body|length > 200 %}...{% endif %}</p>
+                    <small>{{ post.timestamp.strftime('%d.%m.%Y %H:%M') }}</small>
+                    <div class="mt-1">
+                        {% for tag in post.tags %}
+                            <a href="{{ url_for('posts_by_tag', tag_name=tag.name) }}" class="badge bg-secondary">#{{ tag.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p>У пользователя пока нет постов.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
